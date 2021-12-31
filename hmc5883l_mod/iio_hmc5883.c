@@ -152,7 +152,7 @@ int hmc5883_checkDRDY(struct hmc5883_data *hmc ){
 
     do{
 	hmc5883_reg_read(hmc, STATUS_REG, &status, 1);
-	pr_info("Status = %x\r\n",status);
+	//pr_info("Status = %x\r\n",status);
 	//udelay(100);
 	mdelay(10);
     }while(!(status & 0x01));
@@ -182,15 +182,15 @@ static int hmc5883_read_raw(struct iio_dev *indio_dev,
 
 		if(chan->address == DATA_X_MSB){
 		    xyz = (hmc->buffer[0] << 8) |  hmc->buffer[1];
-		    *val = sign_extend32(xyz,15);
+		    *val = sign_extend32(be16_to_cpu(xyz),15);
 		}
 		else if(chan->address == DATA_Z_MSB){
 		    xyz = (hmc->buffer[2] << 8) |  hmc->buffer[3];
-		    *val = sign_extend32(xyz,15);
+		    *val = sign_extend32(be16_to_cpu(xyz),15);
 		}
 		else if(chan->address == DATA_Y_MSB){
 		    xyz = (hmc->buffer[4] << 8) |  hmc->buffer[5];
-		    *val = sign_extend32(xyz,15);
+		    *val = sign_extend32(be16_to_cpu(xyz),15);
 		}
 		//pr_info("xyz = %d",*val);
 		return IIO_VAL_INT;
